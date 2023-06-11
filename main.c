@@ -7,6 +7,8 @@
 #include <netinet/in.h>
 #include <linux/if_ether.h>
 
+// TODO インターフェースを区別する
+
 int main(int argc, char *argv[]) {
   struct ifaddrs *ifaddrs;
   getifaddrs(&ifaddrs);
