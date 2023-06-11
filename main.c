@@ -43,5 +43,6 @@ int main(int argc, char *argv[]) {
   }
   
   close(socketfd);
+  freeifaddrs(&ifaddrs);
   return 0;
 }
