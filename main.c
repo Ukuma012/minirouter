@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <linux/if_ether.h>
-// #include "ethernet.h"
+#include "ethernet.h"
 
 #define buffer_size 1500
 
@@ -18,7 +18,7 @@ void buffer_init(unsigned char *buffer) {
 
 int main(int argc, char *argv[])
 {
-  // ether_hello();
+  ether_hello();
   struct ifaddrs *ifaddrs;
   getifaddrs(&ifaddrs);
 
