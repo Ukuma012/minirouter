@@ -7,6 +7,14 @@
 #include <netinet/in.h>
 #include <linux/if_ether.h>
 
+#define buffer_size 1500
+
+void buffer_init(unsigned char *buffer) {
+  for(int i = 0; i < buffer_size; i++) {
+    buffer[i] = 0;
+  }
+}
+
 int main(int argc, char *argv[])
 {
   struct ifaddrs *ifaddrs;
@@ -28,10 +36,11 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  unsigned char buffer[1500];
+  unsigned char buffer[buffer_size];
   while (1)
   {
     ssize_t n;
+    buffer_init(buffer);
     if ((n = recv(socketfd, buffer, sizeof(buffer), 0)) < 0)
     {
       perror("recv failed\n");
