@@ -18,7 +18,6 @@ void buffer_init(unsigned char *buffer) {
 
 int main(int argc, char *argv[])
 {
-  ether_hello();
   struct ifaddrs *ifaddrs;
   getifaddrs(&ifaddrs);
 
