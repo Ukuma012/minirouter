@@ -1,0 +1,1 @@
+void ether_hello();
