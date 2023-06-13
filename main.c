@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
       }
       printf("\n");
     }
+    ether_dump(buffer);
   }
 
   close(socketfd);
