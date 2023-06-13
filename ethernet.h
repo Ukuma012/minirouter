@@ -1,1 +1,1 @@
-void ether_hello();
+void ether_dump(unsigned char *);
