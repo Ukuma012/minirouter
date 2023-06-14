@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <linux/if_ether.h>
 #include "ethernet.h"
+#include "ip.h"
 
 #define buffer_size 1500
 
