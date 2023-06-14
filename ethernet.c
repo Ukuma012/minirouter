@@ -9,12 +9,28 @@ struct ethernet_header {
     uint16_t ethertype;
 } __attribute__((__packed__));
 
-void ether_dump(unsigned char *buffer) {
+void ether_input(unsigned char *buffer) {
     struct ethernet_header *ether_header;
     ether_header = (struct ethernet_header *)buffer;
+    uint16_t ether_type = ntohs(ether_header->ethertype);
 
     printf("Ethernet Header\n");
     printf("Destination MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", ether_header->dest_mac_addr[0], ether_header->dest_mac_addr[1], ether_header->dest_mac_addr[2], ether_header->dest_mac_addr[3], ether_header->dest_mac_addr[4], ether_header->dest_mac_addr[5]);
     printf("Source MAC: %02X:%02X:%02X:%02X:%02X:%02X\n", ether_header->source_mac_addr[0], ether_header->source_mac_addr[1], ether_header->source_mac_addr[2], ether_header->source_mac_addr[3], ether_header->source_mac_addr[4], ether_header->source_mac_addr[5]);
-    printf("Type: %04X\n", ntohs(ether_header->ethertype));
+    printf("Type: %04X\n", ether_type);
+
+    switch (ether_type)
+    {
+        case ETHER_TYPE_ARP:
+            printf("%s\n", "ARP!");
+            return;
+        case ETHER_TYPE_IP:
+            printf("%s\n", "IPV4!");
+            return;
+        case ETHER_TYPE_IPV6:
+            printf("%s\n", "IPV6!");
+            return;
+    default:
+        break;
+    }
 }
