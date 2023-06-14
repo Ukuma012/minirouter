@@ -25,6 +25,7 @@ void ether_input(unsigned char *buffer) {
             printf("%s\n", "ARP!");
             return;
         case ETHER_TYPE_IP:
+            // ip_input(buffer + ETHER_HEADER_SIZE);
             printf("%s\n", "IPV4!");
             return;
         case ETHER_TYPE_IPV6:
