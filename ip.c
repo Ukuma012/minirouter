@@ -27,6 +27,7 @@ void ipv4_input(unsigned char *buffer) {
             printf("%s\n", "UDP");
             return;
         default:
+            printf("%s\n", "Unknown IP protocol");
             break;
     }
     return;
