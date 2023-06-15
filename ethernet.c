@@ -1,5 +1,6 @@
 #include "ethernet.h"
 #include "ip.h"
+#include "arp.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <arpa/inet.h>
@@ -24,6 +25,7 @@ void ether_input(unsigned char *buffer) {
     {
         case ETHER_TYPE_ARP:
             printf("%s\n", "ARP!");
+            arp_dump(buffer + sizeof(struct ethernet_header));
             return;
         case ETHER_TYPE_IP:
             ipv4_input(buffer + sizeof(struct ethernet_header));
