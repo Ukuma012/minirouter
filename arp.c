@@ -11,3 +11,12 @@ struct arp_header {
    uint8_t target_mac_addr[6];
    uint32_t target_protocol_addr;
 } __attribute__ ((__packed__));
+
+void arp_dump(unsigned char *buffer) {
+    struct arp_header* arp_header;
+    arp_header = (struct arp_header *)buffer;
+
+    printf("%04X", ntoh(arp_header->hardware_type));
+
+    return;
+}
