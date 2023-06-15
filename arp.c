@@ -20,6 +20,7 @@ void arp_dump(unsigned char *buffer) {
     arp_header = (struct arp_header *)buffer;
 
     printf("%04X\n", ntohs(arp_header->hardware_type));
+    printf("%04X\n", ntohs(arp_header->protocol_type));
 
     return;
 }
