@@ -1,0 +1,13 @@
+#include <stdint.h>
+
+struct arp_header {
+   uint16_t hardware_type;
+   uint16_t protocol_type;
+   uint8_t hardware_len;
+   uint8_t protocol_len;
+   uint16_t operation_code;
+   uint8_t source_mac_addr[6];
+   uint32_t source_protocol_addr;
+   uint8_t target_mac_addr[6];
+   uint32_t target_protocol_addr;
+} __attribute__ ((__packed__));
