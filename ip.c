@@ -19,6 +19,15 @@ void ipv4_input(unsigned char *buffer) {
     struct ipv4_header *ipv4_header;
     ipv4_header = (struct ipv4_header *)buffer;
 
-    printf("%d\n", ipv4_header->TTL);
+    switch(ipv4_header->protocol) {
+        case TCP_PROTOCOL:
+            printf("%s\n", "TCP");
+            return;
+        case UDP_PROTOCOL:
+            printf("%s\n", "UDP");
+            return;
+        default:
+            break;
+    }
     return;
 }
