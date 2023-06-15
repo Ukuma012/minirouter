@@ -26,12 +26,13 @@ void ether_input(unsigned char *buffer) {
             printf("%s\n", "ARP!");
             return;
         case ETHER_TYPE_IP:
-            ipv4_input(buffer + ETHER_HEADER_SIZE);
+            ipv4_input(buffer + sizeof(struct ethernet_header));
             return;
         case ETHER_TYPE_IPV6:
             printf("%s\n", "IPV6!");
             return;
     default:
+            printf("%s\n", "Unknown Ethernet type");
         break;
     }
 }
