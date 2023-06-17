@@ -1,3 +1,4 @@
+#define ICMP_PROTOCOL 1
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
 

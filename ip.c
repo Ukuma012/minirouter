@@ -26,6 +26,9 @@ void ipv4_input(unsigned char *buffer) {
         case UDP_PROTOCOL:
             printf("%s\n", "UDP");
             return;
+        case ICMP_PROTOCOL:
+            printf("%s\n", "ICMP");
+            return;
         default:
             printf("%d %s\n", ipv4_header->protocol, "Unknown IP protocol");
             break;
