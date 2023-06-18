@@ -38,12 +38,6 @@ int main(int argc, char *argv[])
 
   for(struct ifaddrs *tmp = ifaddrs; tmp != NULL; tmp = tmp->ifa_next) {
 
-    printf("Name: %s\n", tmp->ifa_name);
-    if(tmp->ifa_addr == NULL) {
-      continue;
-    }
-    printf("Address Family: %d\n", tmp->ifa_addr->sa_family);
-    printf("-----------------\n");
   }
 
   int socketfd;
