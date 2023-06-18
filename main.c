@@ -5,10 +5,14 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 #include <netinet/in.h>
+#include <net/if.h>
 #include <linux/if_ether.h>
+#include <stdbool.h>
+#include <string.h>
 #include "ethernet.h"
 #include "ip.h"
 
+#define IGNORE_INTERFACES {"lo", "bond0", "dummy0", "tunl0", "sit0"}
 #define buffer_size 1500
 
 void buffer_init(unsigned char *buffer) {
@@ -17,19 +21,30 @@ void buffer_init(unsigned char *buffer) {
   }
 }
 
+bool is_ignore_interface(char *ifname) {
+  char ignore_interfaces[][IF_NAMESIZE] = IGNORE_INTERFACES;
+  for(int i = 0; i < sizoeof(ignore_interfaces) / IF_NAMESIZE; i++) {
+    if(strcmp(ignore_interfaces[i], ifname) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 int main(int argc, char *argv[])
 {
   struct ifaddrs *ifaddrs;
   getifaddrs(&ifaddrs);
 
-  // for(struct ifaddrs *tmp = ifaddrs; tmp != NULL; tmp = tmp->ifa_next) {
-  //   printf("Name: %s\n", tmp->ifa_name);
-  //   if(tmp->ifa_addr == NULL) {
-  //     continue;
-  //   }
-  //   printf("Address Family: %d\n", tmp->ifa_addr->sa_family);
-  //   printf("-----------------\n");
-  // }
+  for(struct ifaddrs *tmp = ifaddrs; tmp != NULL; tmp = tmp->ifa_next) {
+
+    printf("Name: %s\n", tmp->ifa_name);
+    if(tmp->ifa_addr == NULL) {
+      continue;
+    }
+    printf("Address Family: %d\n", tmp->ifa_addr->sa_family);
+    printf("-----------------\n");
+  }
 
   int socketfd;
   if ((socketfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
