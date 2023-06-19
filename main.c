@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <ifaddrs.h>
 #include <sys/socket.h>
+#include <ifaddrs.h>
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <net/if.h>
+#include <linux/if.h>
 #include <linux/if_ether.h>
 #include <stdbool.h>
 #include <string.h>
@@ -23,7 +24,7 @@ void buffer_init(unsigned char *buffer) {
 
 bool is_ignore_interface(char *ifname) {
   char ignore_interfaces[][IF_NAMESIZE] = IGNORE_INTERFACES;
-  for(int i = 0; i < sizoeof(ignore_interfaces) / IF_NAMESIZE; i++) {
+  for(int i = 0; i < sizeof(ignore_interfaces) / IF_NAMESIZE; i++) {
     if(strcmp(ignore_interfaces[i], ifname) == 0) {
       return true;
     }
@@ -33,11 +34,21 @@ bool is_ignore_interface(char *ifname) {
 
 int main(int argc, char *argv[])
 {
+  struct ifreq ifreq;
   struct ifaddrs *ifaddrs;
   getifaddrs(&ifaddrs);
 
-  for(struct ifaddrs *tmp = ifaddrs; tmp != NULL; tmp = tmp->ifa_next) {
-
+  for (struct ifaddrs *tmp = ifaddrs; tmp != NULL; tmp = tmp->ifa_next)
+  {
+    if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_PACKET)
+    {
+      memset(&ifreq, 0, sizeof(struct ifreq));
+      strcpy(ifreq.ifr_name, tmp->ifa_name);
+      if(is_ignore_interface(tmp->ifa_name)) {
+        printf("Skipped to enable interface %s\n", tmp->ifa_name);
+        continue;
+      }
+    }
   }
 
   int socketfd;
