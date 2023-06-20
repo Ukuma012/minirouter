@@ -12,6 +12,7 @@
 #include <netpacket/packet.h>
 #include <stdbool.h>
 #include <string.h>
+#include "net.h"
 #include "ethernet.h"
 #include "ip.h"
 
@@ -41,6 +42,10 @@ bool is_ignore_interface(char *ifname)
   }
   return false;
 }
+
+struct net_device_data {
+  int fd;
+};
 
 int main(int argc, char *argv[])
 {
@@ -89,6 +94,15 @@ int main(int argc, char *argv[])
         close(socketfd);
         continue;
       }
+
+      struct net_device *dev = (struct net_device *)calloc(1, sizeof(struct net_device) + sizeof(struct net_device_data));
+      // dev->ops.transmit = net_device_transmit;
+      // dev->ops.poll = net_device_poll;
+      strcpy(dev->name, tmp->ifa_name);
+      memcpy(dev->mac_addr, &ifreq.ifr_ifru.ifru_hwaddr.sa_data[0], 6);
+      ((struct net_device_data *)dev->data)->fd = socketfd;
+
+      printf("Created device %s socket %d\n", dev->name, socketfd);
     }
   }
 
