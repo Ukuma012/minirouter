@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -103,7 +104,23 @@ int main(int argc, char *argv[])
       ((struct net_device_data *)dev->data)->fd = socketfd;
 
       printf("Created device %s socket %d\n", dev->name, socketfd);
+
+      struct net_device *next;
+      next = dev_base;
+      dev_base = dev;
+      dev->next = next;
+
+      // non blocking mode
+      int val = fcntl(socketfd, F_GETFL, 0);
+      fcntl(socketfd, F_SETFL, val | O_NONBLOCK);
     }
+  }
+
+  freeifaddrs(ifaddrs);
+
+  if(dev_base == NULL) {
+    fprintf(stderr, "No interfaces");
+    exit(1);
   }
 
   unsigned char buffer[buffer_size];
