@@ -2,30 +2,40 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <ifaddrs.h>
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <net/if.h>
 #include <linux/if.h>
 #include <linux/if_ether.h>
+#include <netpacket/packet.h>
 #include <stdbool.h>
 #include <string.h>
 #include "ethernet.h"
 #include "ip.h"
 
-#define IGNORE_INTERFACES {"lo", "bond0", "dummy0", "tunl0", "sit0"}
+#define IGNORE_INTERFACES                    \
+  {                                          \
+    "lo", "bond0", "dummy0", "tunl0", "sit0" \
+  }
 #define buffer_size 1500
 
-void buffer_init(unsigned char *buffer) {
-  for(int i = 0; i < buffer_size; i++) {
+void buffer_init(unsigned char *buffer)
+{
+  for (int i = 0; i < buffer_size; i++)
+  {
     buffer[i] = 0;
   }
 }
 
-bool is_ignore_interface(char *ifname) {
+bool is_ignore_interface(char *ifname)
+{
   char ignore_interfaces[][IF_NAMESIZE] = IGNORE_INTERFACES;
-  for(int i = 0; i < sizeof(ignore_interfaces) / IF_NAMESIZE; i++) {
-    if(strcmp(ignore_interfaces[i], ifname) == 0) {
+  for (int i = 0; i < sizeof(ignore_interfaces) / IF_NAMESIZE; i++)
+  {
+    if (strcmp(ignore_interfaces[i], ifname) == 0)
+    {
       return true;
     }
   }
@@ -34,6 +44,7 @@ bool is_ignore_interface(char *ifname) {
 
 int main(int argc, char *argv[])
 {
+  int socketfd;
   struct ifreq ifreq;
   struct ifaddrs *ifaddrs;
   getifaddrs(&ifaddrs);
@@ -44,18 +55,41 @@ int main(int argc, char *argv[])
     {
       memset(&ifreq, 0, sizeof(struct ifreq));
       strcpy(ifreq.ifr_name, tmp->ifa_name);
-      if(is_ignore_interface(tmp->ifa_name)) {
+      if (is_ignore_interface(tmp->ifa_name))
+      {
         printf("Skipped to enable interface %s\n", tmp->ifa_name);
         continue;
       }
-    }
-  }
 
-  int socketfd;
-  if ((socketfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
-  {
-    perror("socket failed\n");
-    exit(1);
+      if ((socketfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0)
+      {
+        perror("socket failed\n");
+        exit(1);
+      }
+
+      if(ioctl(socketfd, SIOCGIFINDEX, &ifreq) < 0) {
+        fprintf(stderr, "ioctl SIOCGIFINDEX faield\n");
+        close(socketfd);
+        exit(1);
+      }
+
+      struct sockaddr_ll addr;
+      memset(&addr, 0, sizeof(addr));
+      addr.sll_family = AF_PACKET;
+      addr.sll_protocol = htons(ETH_P_ALL);
+      addr.sll_ifindex = ifreq.ifr_ifru.ifru_ivalue;
+      if(bind(socketfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+        fprintf(stderr, "bind failed\n");
+        close(socketfd);
+        exit(1);
+      }
+
+      if(ioctl(socketfd, SIOCGIFHWADDR, &ifreq) != 0) {
+        printf("%s\n", "ioctl SIOCGIFHWADDR failed");
+        close(socketfd);
+        continue;
+      }
+    }
   }
 
   unsigned char buffer[buffer_size];
