@@ -11,7 +11,7 @@ struct ethernet_header {
     uint16_t ethertype;
 } __attribute__((__packed__));
 
-void ether_input(unsigned char *buffer) {
+void ether_dump(unsigned char *buffer) {
     struct ethernet_header *ether_header;
     ether_header = (struct ethernet_header *)buffer;
     uint16_t ether_type = ntohs(ether_header->ethertype);

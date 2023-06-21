@@ -166,5 +166,6 @@ int net_device_poll(struct net_device *dev)
     printf("%02X", buffer[i]);
   }
   printf("\n");
+  ether_dump(buffer);
   return 0;
 }
