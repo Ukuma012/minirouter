@@ -13,6 +13,7 @@
 #include <netpacket/packet.h>
 #include <stdbool.h>
 #include <string.h>
+#include <errno.h>
 #include "net.h"
 #include "ethernet.h"
 #include "ip.h"
@@ -44,9 +45,12 @@ bool is_ignore_interface(char *ifname)
   return false;
 }
 
-struct net_device_data {
+struct net_device_data
+{
   int fd;
 };
+
+int net_device_poll(struct net_device *);
 
 int main(int argc, char *argv[])
 {
@@ -73,7 +77,8 @@ int main(int argc, char *argv[])
         exit(1);
       }
 
-      if(ioctl(socketfd, SIOCGIFINDEX, &ifreq) < 0) {
+      if (ioctl(socketfd, SIOCGIFINDEX, &ifreq) < 0)
+      {
         fprintf(stderr, "ioctl SIOCGIFINDEX faield\n");
         close(socketfd);
         exit(1);
@@ -84,13 +89,15 @@ int main(int argc, char *argv[])
       addr.sll_family = AF_PACKET;
       addr.sll_protocol = htons(ETH_P_ALL);
       addr.sll_ifindex = ifreq.ifr_ifru.ifru_ivalue;
-      if(bind(socketfd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+      if (bind(socketfd, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+      {
         fprintf(stderr, "bind failed\n");
         close(socketfd);
         exit(1);
       }
 
-      if(ioctl(socketfd, SIOCGIFHWADDR, &ifreq) != 0) {
+      if (ioctl(socketfd, SIOCGIFHWADDR, &ifreq) != 0)
+      {
         printf("%s\n", "ioctl SIOCGIFHWADDR failed");
         close(socketfd);
         continue;
@@ -98,7 +105,7 @@ int main(int argc, char *argv[])
 
       struct net_device *dev = (struct net_device *)calloc(1, sizeof(struct net_device) + sizeof(struct net_device_data));
       // dev->ops.transmit = net_device_transmit;
-      // dev->ops.poll = net_device_poll;
+      dev->ops.poll = net_device_poll;
       strcpy(dev->name, tmp->ifa_name);
       memcpy(dev->mac_addr, &ifreq.ifr_ifru.ifru_hwaddr.sa_data[0], 6);
       ((struct net_device_data *)dev->data)->fd = socketfd;
@@ -118,34 +125,46 @@ int main(int argc, char *argv[])
 
   freeifaddrs(ifaddrs);
 
-  if(dev_base == NULL) {
+  if (dev_base == NULL)
+  {
     fprintf(stderr, "No interfaces");
     exit(1);
   }
 
-  unsigned char buffer[buffer_size];
-  while (1)
+  while (true)
   {
-    ssize_t n;
-    buffer_init(buffer);
-    if ((n = recv(socketfd, buffer, sizeof(buffer), 0)) < 0)
+    for (struct net_device *dev = dev_base; dev; dev = dev->next)
     {
-      perror("recv failed\n");
-      exit(1);
+      dev->ops.poll(dev);
     }
-    if (n != 0)
-    {
-      printf("Received %lu bytes:", n);
-      for (int i = 0; i < n; i++)
-      {
-        printf("%02X", buffer[i]);
-      }
-      printf("\n");
-    }
-    ether_input(buffer);
   }
 
   close(socketfd);
   freeifaddrs(ifaddrs);
+  return 0;
+}
+
+int net_device_poll(struct net_device *dev)
+{
+  ssize_t n;
+  unsigned char buffer[buffer_size];
+  n = recv(((struct net_device_data *)dev->data)->fd, buffer, sizeof(buffer), 0);
+  if (n == -1)
+  {
+    if (errno == EAGAIN)
+    {
+      return 0;
+    }
+    else
+    {
+      return 1;
+    }
+  }
+  printf("Received %lu bytes from %s: ", n, dev->name);
+  for (int i = 0; i < n; i++)
+  {
+    printf("%02X", buffer[i]);
+  }
+  printf("\n");
   return 0;
 }
