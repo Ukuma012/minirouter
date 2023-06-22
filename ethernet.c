@@ -6,6 +6,8 @@
 #include "arp.h"
 #include "net.h"
 
+#define ETHERNET_HEADER_SIZE 14
+
 struct ethernet_header
 {
     uint8_t dest_mac_addr[6];
