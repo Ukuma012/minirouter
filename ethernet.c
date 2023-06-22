@@ -6,13 +6,15 @@
 #include "arp.h"
 #include "net.h"
 
-struct ethernet_header {
+struct ethernet_header
+{
     uint8_t dest_mac_addr[6];
     uint8_t source_mac_addr[6];
     uint16_t ethertype;
 } __attribute__((__packed__));
 
-void ether_dump(unsigned char *buffer) {
+void ether_dump(unsigned char *buffer)
+{
     struct ethernet_header *ether_header;
     ether_header = (struct ethernet_header *)buffer;
     uint16_t ether_type = ntohs(ether_header->ethertype);
@@ -24,18 +26,18 @@ void ether_dump(unsigned char *buffer) {
 
     switch (ether_type)
     {
-        case ETHER_TYPE_ARP:
-            printf("%s\n", "ARP!");
-            arp_dump(buffer + sizeof(struct ethernet_header));
-            return;
-        case ETHER_TYPE_IP:
-            ipv4_dump(buffer + sizeof(struct ethernet_header));
-            return;
-        case ETHER_TYPE_IPV6:
-            printf("%s\n", "IPV6!");
-            return;
+    case ETHER_TYPE_ARP:
+        printf("%s\n", "ARP!");
+        arp_dump(buffer + sizeof(struct ethernet_header));
+        return;
+    case ETHER_TYPE_IP:
+        ipv4_dump(buffer + sizeof(struct ethernet_header));
+        return;
+    case ETHER_TYPE_IPV6:
+        printf("%s\n", "IPV6!");
+        return;
     default:
-            printf("%s\n", "Unknown Ethernet type");
+        printf("%s\n", "Unknown Ethernet type");
         break;
     }
 }
