@@ -45,6 +45,24 @@ void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len)
 {
     struct ethernet_header *ethernet_header;
     ethernet_header = (struct ethernet_header *)buffer;
+    uint16_t ether_type = ntohs(ethernet_header->ethertype);
+
+    switch (ether_type)
+    {
+    case ETHER_TYPE_ARP:
+        printf("%s\n", "ARP!");
+        arp_dump(buffer + sizeof(struct ethernet_header));
+        return;
+    case ETHER_TYPE_IP:
+        ipv4_dump(buffer + sizeof(struct ethernet_header));
+        return;
+    case ETHER_TYPE_IPV6:
+        printf("%s\n", "IPV6!");
+        return;
+    default:
+        printf("%s\n", "Unknown Ethernet type");
+        break;
+    }
 
     return;
 }
