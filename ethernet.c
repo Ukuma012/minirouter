@@ -28,7 +28,7 @@ void ether_dump(unsigned char *buffer) {
             arp_dump(buffer + sizeof(struct ethernet_header));
             return;
         case ETHER_TYPE_IP:
-            ipv4_input(buffer + sizeof(struct ethernet_header));
+            ipv4_dump(buffer + sizeof(struct ethernet_header));
             return;
         case ETHER_TYPE_IPV6:
             printf("%s\n", "IPV6!");

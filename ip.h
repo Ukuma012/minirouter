@@ -5,6 +5,6 @@
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
 
-void ipv4_input(unsigned char *);
+void ipv4_dump(unsigned char *);
 
 #endif // IP_H

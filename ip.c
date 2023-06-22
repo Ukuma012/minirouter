@@ -15,7 +15,7 @@ struct ipv4_header {
    uint32_t destination_ipv4_addr; 
 } __attribute__ ((__packed__));
 
-void ipv4_input(unsigned char *buffer) {
+void ipv4_dump(unsigned char *buffer) {
     struct ipv4_header *ipv4_header;
     ipv4_header = (struct ipv4_header *)buffer;
 
