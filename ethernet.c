@@ -59,7 +59,7 @@ void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
         return;
     default:
         printf("%s\n", "Unknown Ethernet type");
-        break;
+        return;
     }
 
     return;
