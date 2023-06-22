@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <arpa/inet.h>
+#include "net.h"
 #include "arp.h"
 #include "utils.h"
 
@@ -31,5 +32,10 @@ void arp_dump(unsigned char *buffer) {
     printf("Target MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n", arp_header->target_mac_addr[0], arp_header->target_mac_addr[1], arp_header->target_mac_addr[2], arp_header->target_mac_addr[3], arp_header->target_mac_addr[4], arp_header->target_mac_addr[5]);
     ip_dot(arp_header->target_protocol_addr);
 
+    return;
+}
+
+void arp_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
+    printf("%s\n", "hello");
     return;
 }
