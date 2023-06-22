@@ -1,6 +1,6 @@
-#include "ip.h"
 #include <stdio.h>
 #include <stdint.h>
+#include "ip.h"
 
 struct ipv4_header {
    uint8_t version_ihl;
