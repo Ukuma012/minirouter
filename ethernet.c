@@ -1,9 +1,10 @@
-#include "ethernet.h"
-#include "ip.h"
-#include "arp.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <arpa/inet.h>
+#include "ethernet.h"
+#include "ip.h"
+#include "arp.h"
+#include "net.h"
 
 struct ethernet_header {
     uint8_t dest_mac_addr[6];
@@ -37,4 +38,9 @@ void ether_dump(unsigned char *buffer) {
             printf("%s\n", "Unknown Ethernet type");
         break;
     }
+}
+
+void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
+    printf("%s\n", "Hello from ether input");
+    return;
 }
