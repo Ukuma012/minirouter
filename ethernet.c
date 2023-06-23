@@ -6,8 +6,6 @@
 #include "arp.h"
 #include "net.h"
 
-#define ETHERNET_HEADER_SIZE 14
-
 struct ethernet_header
 {
     uint8_t dest_mac_addr[6];
@@ -55,6 +53,7 @@ void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
         return;
     case ETHER_TYPE_IP:
         printf("%s\n", "IPV4");
+        ipv4_input(dev, buffer + sizeof(struct ethernet_header), len - sizeof(struct ethernet_header));
         return;
     case ETHER_TYPE_IPV6:
         printf("%s\n", "IPV6");
