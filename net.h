@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include "ip.h"
 
 struct net_device;
 
@@ -15,6 +16,7 @@ struct net_device {
     char name[32];
     uint8_t mac_addr[6];
     struct net_device_ops ops;
+    struct ipv4_device *ip_dev;
     struct net_device *next;
     uint8_t data[];
 };
