@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "ip.h"
 
 struct net_device;
 
@@ -11,6 +10,8 @@ struct net_device_ops{
     int (*transmit) (struct net_device *dev, uint8_t *buffer, size_t len);
     int (*poll) (struct net_device *dev);
 };
+
+struct ipv4_device;
 
 struct net_device {
     char name[32];

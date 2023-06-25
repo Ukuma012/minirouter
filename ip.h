@@ -1,8 +1,6 @@
 #ifndef IP_H
 #define IP_H
 
-#include "net.h"
-
 #define ICMP_PROTOCOL 1
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
@@ -14,8 +12,10 @@ struct ipv4_device {
     uint32_t broadcast_addr;
 };
 
+struct net_device;
+
 void ipv4_dump(unsigned char *);
-void ipv4_address_set(struct net_device *, uint32_t, uint32_t);
-void ipv4_input(struct net_device *, unsigned char *, ssize_t);
+void ipv4_address_set(struct net_device *dev, uint32_t ipv4_address, uint32_t subnet_mask);
+void ipv4_input(struct net_device * dev, unsigned char * buffer, ssize_t len);
 
 #endif // IP_H
