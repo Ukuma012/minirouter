@@ -74,7 +74,6 @@ void ipv4_input(struct net_device *dev, unsigned char *buffer, ssize_t len)
     {
     case TCP_PROTOCOL:
         printf("%s\n", "TCP");
-        ipv4_address_set(dev, IPV4_ADDRESS(192, 168, 0, 1), IPV4_ADDRESS(255, 255, 255, 0));
         return;
     case UDP_PROTOCOL:
         printf("%s\n", "UDP");
