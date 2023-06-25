@@ -27,9 +27,11 @@ void arp_dump(unsigned char *buffer) {
     printf("hardware length: %u\n", arp_header->hardware_len);
     printf("protocol length: %u\n", arp_header->protocol_len);
     printf("operation code: %04X\n", ntohs(arp_header->operation_code));
-    printf("Destination MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n", arp_header->source_mac_addr[0], arp_header->source_mac_addr[1], arp_header->source_mac_addr[2], arp_header->source_mac_addr[3], arp_header->source_mac_addr[4], arp_header->source_mac_addr[5]);
+    printf("Source MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n", arp_header->source_mac_addr[0], arp_header->source_mac_addr[1], arp_header->source_mac_addr[2], arp_header->source_mac_addr[3], arp_header->source_mac_addr[4], arp_header->source_mac_addr[5]);
+    printf("Source IP address: ");
     ip_dot(arp_header->source_protocol_addr); 
     printf("Target MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n", arp_header->target_mac_addr[0], arp_header->target_mac_addr[1], arp_header->target_mac_addr[2], arp_header->target_mac_addr[3], arp_header->target_mac_addr[4], arp_header->target_mac_addr[5]);
+    printf("Target IP address: ");
     ip_dot(arp_header->target_protocol_addr);
 
     return;
