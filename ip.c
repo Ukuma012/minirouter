@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <arpa/inet.h>
 #include "ip.h"
 #include "net.h"
 #include "utils.h"
@@ -66,10 +67,17 @@ void ipv4_address_set(struct net_device *dev, uint32_t ipv4_address, uint32_t su
     return;
 }
 
-void ipv4_input(struct net_device *dev, unsigned char *buffer, ssize_t len)
+void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len)
 {
     struct ipv4_header *ipv4_header;
     ipv4_header = (struct ipv4_header *)buffer;
+
+    for(struct net_device *dev = dev_base; dev; dev = dev->next) {
+        if(dev->ip_dev->ipv4_address == ntohl(ipv4_header->destination_ipv4_addr)) {
+            printf("%s\n", "Ah! these packets are for me!");
+        }
+    }
+
     switch (ipv4_header->protocol)
     {
     case TCP_PROTOCOL:
