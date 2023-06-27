@@ -11,7 +11,8 @@ struct arp_entry
     struct arp_entry *next;
 };
 
-void arp_cash_add(struct net_device *, uint8_t *, uint32_t ip_addr);
+void arp_cash_add(struct net_device *, uint8_t *, uint32_t);
+struct arp_entry *arp_cash_search(uint32_t );
 void arp_dump(unsigned char *);
 void arp_input(struct net_device *, unsigned char *, ssize_t);
 

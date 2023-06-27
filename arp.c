@@ -65,6 +65,27 @@ void arp_cash_add(struct net_device *dev, uint8_t *mac_addr, uint32_t ip_addr)
     return;
 }
 
+struct arp_entry *arp_cash_search(uint32_t ip_addr) {
+    uint32_t index;
+    index = ip_addr % ARP_CASH_SIZE;
+    struct arp_entry *candidate = &arp_cash[index];
+
+    if(candidate->ip_addr == ip_addr) {
+        return candidate;
+    } else if(candidate->ip_addr == 0) {
+        return NULL;
+    }
+
+    while(candidate->next != NULL) {
+        candidate = candidate->next;
+        if(candidate->ip_addr == ip_addr) {
+            return candidate;
+        }
+    }
+
+    return NULL;
+}
+
 void arp_dump(unsigned char *buffer)
 {
     struct arp_header *arp_header;
