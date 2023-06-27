@@ -112,3 +112,7 @@ void arp_input(struct net_device *dev, unsigned char *buffer, ssize_t len)
     printf("%s\n", "hello");
     return;
 }
+
+void arp_request(struct net_device *dev, uint32_t ip_addr) {
+
+}
