@@ -50,7 +50,8 @@ struct net_device_data
   int fd;
 };
 
-int net_device_poll(struct net_device *);
+int net_device_input(struct net_device *);
+int net_device_output(struct net_device *, uint8_t *, size_t);
 
 int main(int argc, char *argv[])
 {
@@ -104,8 +105,8 @@ int main(int argc, char *argv[])
       }
 
       struct net_device *dev = (struct net_device *)calloc(1, sizeof(struct net_device) + sizeof(struct net_device_data));
-      // dev->ops.transmit = net_device_transmit;
-      dev->ops.poll = net_device_poll;
+      dev->ops.transmit = net_device_output;
+      dev->ops.poll = net_device_input;
       strcpy(dev->name, tmp->ifa_name);
       memcpy(dev->mac_addr, &ifreq.ifr_ifru.ifru_hwaddr.sa_data[0], 6);
       ((struct net_device_data *)dev->data)->fd = socketfd;
@@ -147,7 +148,7 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-int net_device_poll(struct net_device *dev)
+int net_device_input(struct net_device *dev)
 {
   ssize_t n;
   unsigned char buffer[buffer_size];
@@ -170,5 +171,13 @@ int net_device_poll(struct net_device *dev)
   }
   printf("\n");
   ether_input(dev, buffer, n);
+  return 0;
+}
+
+int net_device_output(struct net_device *dev, uint8_t *buffer, size_t len) {
+  if((send(((struct net_device_data *)dev->data)->fd, buffer, len, 0)) < 0) {
+    fprintf(stderr, "send failed\n");
+    exit(1);
+  }
   return 0;
 }
