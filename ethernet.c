@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <stdlib.h>
 #include "ethernet.h"
 #include "ip.h"
 #include "arp.h"
