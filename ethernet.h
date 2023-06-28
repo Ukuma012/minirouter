@@ -8,6 +8,7 @@
 #define ETHER_TYPE_IPV6 0x86dd
 
 void ether_input(struct net_device *, unsigned char *, ssize_t);
+void ether_output(struct net_device *, struct mbuf *, uint8_t *, uint16_t);
 void ether_dump(unsigned char *);
 
 #endif // ETHERNET_H

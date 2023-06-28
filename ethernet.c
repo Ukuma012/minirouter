@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <arpa/inet.h>
+#include <string.h>
 #include "ethernet.h"
 #include "ip.h"
 #include "arp.h"
 #include "net.h"
+#include "mbuf.h"
 
 struct ethernet_header
 {
@@ -64,4 +66,34 @@ void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
     }
 
     return;
+}
+
+void ether_output(struct net_device *dev, struct mbuf *payload, uint8_t *dest_addr, uint16_t ether_type) {
+    struct mbuf *ether_mbuf = create(sizeof(struct ethernet_header));
+    struct ethernet_header *ether_header;
+    ether_header = (struct ethernet_header *)ether_mbuf->buffer;
+    
+    memcpy(ether_header->source_mac_addr, dev->mac_addr, 6);
+    memcpy(ether_header->dest_mac_addr, dest_addr, 6);
+    ether_header->ethertype = htons(ether_type);
+
+    payload->prev = ether_mbuf;
+    ether_mbuf->next = payload;
+
+    uint8_t buffer[1500];
+    size_t total_len = 0;
+    struct mbuf *current = ether_mbuf;
+    while(current != NULL) {
+        if(total_len + current->len > sizeof(buffer)) {
+            fprintf(stderr, "buffer overflow\n");
+            exit(1);
+        }
+        memcpy(&buffer[total_len], current->buffer, current->len);
+        total_len += current->len;
+        current = current->next;
+    }
+
+    dev->ops.transmit(dev, buffer, total_len);
+
+    // @TODO Free mbuf
 }
