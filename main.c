@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
       }
 
       struct net_device *dev = (struct net_device *)calloc(1, sizeof(struct net_device) + sizeof(struct net_device_data));
+      // @TODO net_device initialize
       dev->ops.transmit = net_device_output;
       dev->ops.poll = net_device_input;
       strcpy(dev->name, tmp->ifa_name);
