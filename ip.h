@@ -15,10 +15,11 @@ struct ipv4_device
 };
 
 struct net_device;
+struct mbuf;
 
 void ipv4_dump(unsigned char *);
 void ipv4_address_set(struct net_device *, uint32_t, uint32_t);
 void ipv4_input(struct net_device *, unsigned char *, ssize_t);
-void ipv4_output(struct net_device *, struct mbuf *, uint32_t, uint32_t, uint8_t)
+void ipv4_output(struct net_device *, struct mbuf *, uint32_t, uint32_t, uint8_t);
 
 #endif // IP_H
