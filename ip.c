@@ -5,8 +5,10 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include "ip.h"
+#include "ethernet.h"
 #include "net.h"
 #include "utils.h"
+#include "mbuf.h"
 
 struct ipv4_header
 {
@@ -21,6 +23,26 @@ struct ipv4_header
     uint32_t source_ipv4_addr;
     uint32_t destination_ipv4_addr;
 } __attribute__((__packed__));
+
+uint16_t ipv4_calculate_checksum(const void *data, size_t len) {
+    const uint16_t *buffer = (const uint16_t *)data;
+    uint32_t sum = 0;
+
+    while(len > 1) {
+        sum += *buffer++;
+        len -= 2;
+    }
+
+    if(len > 0) {
+        sum += *(const uint8_t *)buffer;
+    }
+
+    while(sum >> 16) {
+        sum = (sum & 0xffff) + (sum >> 16);
+    }
+
+    return (uint16_t)(~sum);
+}
 
 void ipv4_dump(unsigned char *buffer)
 {
@@ -94,4 +116,45 @@ void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len
         }
     }
     return;
+}
+
+void ipv4_output(struct net_device *dev, struct mbuf *payload, uint32_t source_addr, uint32_t dest_addr, uint8_t protocol_number)
+{
+    uint16_t total_len = 0;
+    struct mbuf *current = payload;
+    while (current != NULL)
+    {
+        total_len += current->len;
+        current = current->next;
+    }
+
+    struct mbuf *ipv4_mbuf = mbuf_create(sizeof(struct ipv4_header));
+    payload->prev = ipv4_mbuf;
+    ipv4_mbuf->next = payload;
+
+    struct ipv4_header *ipv4_header;
+    ipv4_header = (struct ipv4_header *)ipv4_mbuf->buffer;
+
+    ipv4_header->version_ihl = 0x45;
+    ipv4_header->type_of_service = 0;
+    ipv4_header->total_length = htons(sizeof(struct ipv4_header) + total_len);
+    ipv4_header->identification = 0;
+    ipv4_header->flags_fragment_offset = 0;
+    ipv4_header->TTL = TTL_VALUE;
+    ipv4_header->protocol = protocol_number;
+    ipv4_header->header_checksum = 0;
+    ipv4_header->source_ipv4_addr = htons(source_addr);
+    ipv4_header->destination_ipv4_addr = htons(dest_addr);
+    ipv4_header->header_checksum = ipv4_calculate_checksum(ipv4_header, sizeof(struct ipv4_header));
+
+    for(struct net_device *dev = dev_base; dev; dev = dev->next) {
+        if(dev->ip_dev == NULL || dev->ip_dev->ipv4_address == IPV4_ADDRESS(0,0,0,0)) {
+            continue;
+        }
+
+        // if same network
+        if((dev->ip_dev->ipv4_address & dev->ip_dev->subnet_mask) == (ipv4_header->source_ipv4_addr & dev->ip_dev->subnet_mask)) {
+            // ether_output(dev, ipv4_mbuf, dest_mac_addr, ETHER_TYPE_IP);
+        }
+    }
 }
