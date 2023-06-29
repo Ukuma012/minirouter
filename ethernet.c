@@ -70,7 +70,7 @@ void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
 }
 
 void ether_output(struct net_device *dev, struct mbuf *payload, uint8_t *dest_addr, uint16_t ether_type) {
-    struct mbuf *ether_mbuf = create(sizeof(struct ethernet_header));
+    struct mbuf *ether_mbuf = mbuf_create(sizeof(struct ethernet_header));
     struct ethernet_header *ether_header;
     ether_header = (struct ethernet_header *)ether_mbuf->buffer;
     
@@ -96,5 +96,5 @@ void ether_output(struct net_device *dev, struct mbuf *payload, uint8_t *dest_ad
 
     dev->ops.transmit(dev, buffer, total_len);
 
-    // @TODO Free mbuf
+    mbuf_memfree(ether_mbuf);
 }

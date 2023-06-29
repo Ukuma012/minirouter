@@ -10,6 +10,8 @@ struct mbuf {
     uint8_t buffer[];
 };
 
-struct mbuf *create(uint32_t);
+void mbuf_init(struct mbuf *);
+struct mbuf *mbuf_create(uint32_t);
+void mbuf_memfree(struct mbuf *);
 
 #endif // MBUF_H
