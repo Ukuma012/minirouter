@@ -154,6 +154,7 @@ void ipv4_output(struct net_device *dev, struct mbuf *payload, uint32_t source_a
 
         // if same network
         if((dev->ip_dev->ipv4_address & dev->ip_dev->subnet_mask) == (ipv4_header->source_ipv4_addr & dev->ip_dev->subnet_mask)) {
+            // find destination mac address using ARP
             // ether_output(dev, ipv4_mbuf, dest_mac_addr, ETHER_TYPE_IP);
         }
     }
