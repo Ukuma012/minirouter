@@ -131,5 +131,7 @@ void arp_request(struct net_device *dev, uint32_t target_ip_addr) {
     arp_header->source_protocol_addr = htonl(dev->ip_dev->ipv4_address);
     arp_header->target_protocol_addr = htonl(target_ip_addr);
 
+    const uint8_t ETHERNET_BROADCAST[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}; 
+
     ether_output(dev, arp_mbuf, ETHERNET_BROADCAST, ETHER_TYPE_ARP);
 }
