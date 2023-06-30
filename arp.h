@@ -1,6 +1,9 @@
 #ifndef ARP_H
 #define ARP_H
 
+#define ARP_HARDWARETYPE_ETHERNET 0x0001
+#define ARP_REQUEST 0x0001
+#define ARP_REPLY 0x0002
 struct net_device;
 
 struct arp_entry

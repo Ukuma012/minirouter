@@ -3,9 +3,12 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include "ethernet.h"
+#include "ip.h"
 #include "net.h"
 #include "arp.h"
 #include "utils.h"
+#include "mbuf.h"
 
 #define ARP_CASH_SIZE 32
 
@@ -113,6 +116,20 @@ void arp_input(struct net_device *dev, unsigned char *buffer, ssize_t len)
     return;
 }
 
-void arp_request(struct net_device *dev, uint32_t ip_addr) {
+void arp_request(struct net_device *dev, uint32_t target_ip_addr) {
+    struct mbuf *arp_mbuf;
+    arp_mbuf = mbuf_create(sizeof(struct arp_header));
+    struct arp_header *arp_header;
+    arp_header = (struct arp_header *)arp_mbuf->buffer;
 
+    arp_header->hardware_type = htons(ARP_HARDWARETYPE_ETHERNET);
+    arp_header->protocol_type = htons(ETHER_TYPE_IP);
+    arp_header->hardware_len = ETHER_ADDR_LENGTH;
+    arp_header->protocol_len = IPV4_PROTOCOL_LENGTH;
+    arp_header->operation_code = htons(ARP_REQUEST);
+    memcpy(arp_header->source_mac_addr, dev->mac_addr, 6);
+    arp_header->source_protocol_addr = htonl(dev->ip_dev->ipv4_address);
+    arp_header->target_protocol_addr = htonl(target_ip_addr);
+
+    ether_output(dev, arp_mbuf, ETHERNET_BROADCAST, ETHER_TYPE_ARP);
 }
