@@ -35,14 +35,10 @@ ip netns exec host1 ethtool -K host1-router1 rx off tx off
 ip netns exec host1 ip route add default via 192.168.1.1
 
 # router1のリンクの設定
-ip netns exec router1 ip addr add 192.168.1.1/24 dev router1-host1
 ip netns exec router1 ip link set router1-host1 up
 ip netns exec router1 ethtool -K router1-host1 rx off tx off
-ip netns exec router1 ip addr add 192.168.0.1/24 dev router1-router2
 ip netns exec router1 ip link set router1-router2 up
 ip netns exec router1 ethtool -K router1-router2 rx off tx off
-ip netns exec router1 ip route add 192.168.2.0/24 via 192.168.0.2
-ip netns exec router1 sysctl -w net.ipv4.ip_forward=0
 
 # router2のリンクの設定
 ip netns exec router2 ip addr add 192.168.0.2/24 dev router2-router1
