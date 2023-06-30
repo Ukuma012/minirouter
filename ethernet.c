@@ -52,7 +52,7 @@ void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
      switch (ether_type)
     {
     case ETHER_TYPE_ARP:
-        arp_dump(buffer + sizeof(struct ethernet_header));
+        arp_input(dev, buffer + sizeof(struct ethernet_header), len - sizeof(struct ethernet_header));
         return;
     case ETHER_TYPE_IP:
         printf("%s\n", "IPV4");
