@@ -1,6 +1,7 @@
 #ifndef IP_H
 #define IP_H
 
+#define IPV4_PROTOCOL_LENGTH 4
 #define ICMP_PROTOCOL 1
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
