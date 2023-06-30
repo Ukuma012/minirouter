@@ -110,10 +110,30 @@ void arp_dump(unsigned char *buffer)
     return;
 }
 
-void arp_input(struct net_device *dev, unsigned char *buffer, ssize_t len)
+void arp_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len)
 {
-    printf("%s\n", "hello");
-    return;
+    if(len < sizeof(struct arp_header)) {
+        printf("%s\n", "packet is too short for arp");
+        return;
+    }
+
+    struct arp_header *arp_header;
+    arp_header = (struct arp_header *)buffer;
+    
+    uint16_t op_code = ntohs(arp_header->operation_code);
+
+    switch (ntohs(arp_header->protocol_type))
+    {
+    case ETHER_TYPE_IP:
+        if(op_code == ARP_REQUEST) {
+            printf("%s\n", "ARP request arrives");
+            return;
+        } else if(op_code == ARP_REPLY) {
+            printf("%s\n", "ARP reply arrives");
+            return;
+        }
+        break;
+    }
 }
 
 void arp_request(struct net_device *dev, uint32_t target_ip_addr) {
