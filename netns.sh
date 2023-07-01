@@ -35,6 +35,7 @@ ip netns exec host1 ethtool -K host1-router1 rx off tx off
 ip netns exec host1 ip route add default via 192.168.1.1
 
 # router1のリンクの設定
+# ip addrはプログラムからセットする
 ip netns exec router1 ip link set router1-host1 up
 ip netns exec router1 ethtool -K router1-host1 rx off tx off
 ip netns exec router1 ip link set router1-router2 up
