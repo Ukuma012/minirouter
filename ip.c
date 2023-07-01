@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include "ip.h"
+#include "arp.h"
 #include "ethernet.h"
 #include "net.h"
 #include "utils.h"
@@ -155,7 +156,14 @@ void ipv4_output(struct net_device *dev, struct mbuf *payload, uint32_t source_a
         // if same network
         if((dev->ip_dev->ipv4_address & dev->ip_dev->subnet_mask) == (ipv4_header->source_ipv4_addr & dev->ip_dev->subnet_mask)) {
             // find destination mac address using ARP
-            // ether_output(dev, ipv4_mbuf, dest_mac_addr, ETHER_TYPE_IP);
+            struct arp_entry *arp_entry;
+            arp_entry = arp_cash_search(dest_addr);
+            if(arp_entry == NULL) {
+                arp_request(dev, dest_addr);
+                mbuf_memfree(payload);
+                return;
+            }
+            ether_output(dev, ipv4_mbuf, arp_entry->mac_addr, ETHER_TYPE_IP);
         }
     }
 }
