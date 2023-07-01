@@ -117,22 +117,49 @@ void arp_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len)
         return;
     }
 
-    struct arp_header *arp_header;
-    arp_header = (struct arp_header *)buffer;
+    struct arp_header *arp_input_header;
+    arp_input_header = (struct arp_header *)buffer;
     
-    uint16_t op_code = ntohs(arp_header->operation_code);
+    uint16_t op_code = ntohs(arp_input_header->operation_code);
 
-    switch (ntohs(arp_header->protocol_type))
+    switch (ntohs(arp_input_header->protocol_type))
     {
     case ETHER_TYPE_IP:
         if(op_code == ARP_REQUEST) {
             printf("%s\n", "ARP request arrives");
+            arp_request_process(input_dev, arp_input_header);
             return;
         } else if(op_code == ARP_REPLY) {
             printf("%s\n", "ARP reply arrives");
             return;
         }
         break;
+    }
+}
+
+void arp_request_process(struct net_device *input_dev, struct arp_header *request) {
+    if(input_dev->ip_dev != NULL && input_dev->ip_dev->ipv4_address != IPV4_ADDRESS(0,0,0,0)) {
+        if(input_dev->ip_dev->ipv4_address == ntohl(request->target_protocol_addr)) {
+            struct mbuf *reply_mbuf;
+            reply_mbuf = mbuf_create(sizeof(struct arp_header));
+            
+            struct arp_header *arp_reply_header;
+            arp_reply_header = (struct arp_header *)reply_mbuf->buffer;
+
+            arp_reply_header->hardware_type = htons(ARP_HARDWARETYPE_ETHERNET);
+            arp_reply_header->protocol_type = htons(ETHER_TYPE_IP);
+            arp_reply_header->hardware_len = ETHER_ADDR_LENGTH;
+            arp_reply_header->protocol_len = IPV4_PROTOCOL_LENGTH;
+            arp_reply_header->operation_code = htons(ARP_REPLY);
+            memcpy(arp_reply_header->source_mac_addr, input_dev->mac_addr, 6);
+            arp_reply_header->source_protocol_addr = htonl(input_dev->ip_dev->ipv4_address);
+            memcpy(arp_reply_header->target_mac_addr, request->source_mac_addr, 6);
+            arp_reply_header->target_protocol_addr = request->source_protocol_addr;
+
+            ether_output(input_dev, reply_mbuf, request->source_mac_addr, ETHER_TYPE_ARP);
+            arp_cash_add(input_dev, request->source_mac_addr, ntohl(request->target_protocol_addr));
+            return;
+        }
     }
 }
 
