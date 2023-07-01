@@ -163,6 +163,13 @@ void arp_request_process(struct net_device *input_dev, struct arp_header *reques
     }
 }
 
+void arp_reply_process(struct net_device *dev, struct arp_header *reply) {
+    if(dev->ip_dev != NULL && dev->ip_dev->ipv4_address != IPV4_ADDRESS(0,0,0,0)) {
+        arp_cash_add(dev, reply->source_mac_addr, ntohl(reply->source_protocol_addr));
+    }
+    return;
+}
+
 void arp_request(struct net_device *dev, uint32_t target_ip_addr) {
     struct mbuf *arp_mbuf;
     arp_mbuf = mbuf_create(sizeof(struct arp_header));
