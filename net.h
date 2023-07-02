@@ -22,7 +22,7 @@ struct net_device {
     uint8_t data[];
 };
 
-struct net_device * get_net_device(char *);
+struct net_device * net_get_device_name(char *);
 
 extern struct net_device *dev_base;
 #endif // NET_H
