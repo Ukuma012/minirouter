@@ -7,11 +7,11 @@ minirouter
 Protocols  
 - [x] ETHERNET  
 - [x] ARP  
-- [x] IP  
+- [x] IPV4  
+- [ ] ICMP  
+- [ ] IPV6
 - [ ] TCP  
 - [ ] UDP  
-- [ ] ICMP  
-- [ ] SECURITY  
 
 Attacks
 (https://www.okta.com/identity-101/icmp/)  
