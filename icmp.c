@@ -12,9 +12,9 @@ void icmp_dump(unsigned char *buffer) {
     struct icmp_header *icmp_header;
     icmp_header = (struct icmp_header *)buffer;
 
-    printf("%u\n", icmp_header->type);
-    printf("%u\n", icmp_header->code);
-    printf("%u\n", icmp_header->checksum);
+    printf("icmp type: %u\n", icmp_header->type);
+    printf("icmp code: %u\n", icmp_header->code);
+    printf("icmp checksum: %u\n", icmp_header->checksum);
 
     return;
 }
