@@ -94,7 +94,6 @@ void arp_dump(unsigned char *buffer)
     struct arp_header *arp_header;
     arp_header = (struct arp_header *)buffer;
 
-    printf("%s\n", "ARP");
     printf("hardware type: %04X\n", ntohs(arp_header->hardware_type));
     printf("protocol type: %04X\n", ntohs(arp_header->protocol_type));
     printf("hardware length: %u\n", arp_header->hardware_len);
@@ -127,6 +126,7 @@ void arp_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len)
     case ETHER_TYPE_IP:
         if(op_code == ARP_REQUEST) {
             printf("%s\n", "ARP request arrives");
+            arp_dump(buffer);
             arp_request_process(input_dev, arp_input_header);
             return;
         } else if(op_code == ARP_REPLY) {
