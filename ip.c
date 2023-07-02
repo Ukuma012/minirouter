@@ -111,6 +111,7 @@ void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len
                 return;
             case ICMP_PROTOCOL:
                 printf("%s\n", "ICMP");
+                icmp_input(ipv4_header->source_ipv4_addr, ipv4_header->destination_ipv4_addr, buffer + sizeof(struct ipv4_header), len - sizeof(struct ipv4_header));
                 // icmp_dump(buffer + sizeof(struct ipv4_header));
                 return;
             default:
@@ -122,7 +123,7 @@ void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len
     return;
 }
 
-void ipv4_output(struct net_device *dev, struct mbuf *payload, uint32_t source_addr, uint32_t dest_addr, uint8_t protocol_number)
+void ipv4_output(struct mbuf *payload, uint32_t source_addr, uint32_t dest_addr, uint8_t protocol_number)
 {
     uint16_t total_len = 0;
     struct mbuf *current = payload;
