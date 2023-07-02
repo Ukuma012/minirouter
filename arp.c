@@ -131,6 +131,7 @@ void arp_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len)
             return;
         } else if(op_code == ARP_REPLY) {
             printf("%s\n", "ARP reply arrives");
+            arp_reply_process(input_dev, arp_input_header);
             return;
         }
         break;
