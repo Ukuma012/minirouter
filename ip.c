@@ -112,7 +112,6 @@ void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len
             case ICMP_PROTOCOL:
                 printf("%s\n", "ICMP");
                 icmp_input(ipv4_header->source_ipv4_addr, ipv4_header->destination_ipv4_addr, buffer + sizeof(struct ipv4_header), len - sizeof(struct ipv4_header));
-                // icmp_dump(buffer + sizeof(struct ipv4_header));
                 return;
             default:
                 printf("%d %s\n", ipv4_header->protocol, "Unknown IP protocol");
