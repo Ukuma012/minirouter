@@ -1,10 +1,20 @@
-# Makefile for main.c
-main: main.o ethernet.o icmp.o ip.o arp.o utils.o net.o mbuf.o 
-	gcc -Wall -O2 -o main main.o ethernet.o icmp.o ip.o arp.o utils.o net.o mbuf.o 
+CC = gcc
+CFLAGS = -Wall -O2
 
-.PHONY: clean
+SRCS = main.c ethernet.c ip.c arp.c utils.c net.c mbuf.c icmp.c 
+OBJS = $(SRCS:.c=.o)
+TARGET = main
+
+.PHONY: all clean
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
 clean:
-	rm -rf ./*.o
+	rm -f $(OBJS) $(TARGET)
 
-.c.o:
-	gcc -c $<
+%.o: %.c
+	$(CC) $(CFLAGS) -c $<
+
