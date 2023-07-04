@@ -91,7 +91,7 @@ void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len
                 return;
             case ICMP_PROTOCOL:
                 printf("%s\n", "ICMP");
-                icmp_input(ipv4_header->source_ipv4_addr, ipv4_header->destination_ipv4_addr, buffer + sizeof(struct ipv4_header), len - sizeof(struct ipv4_header));
+                icmp_input(ntohl(ipv4_header->source_ipv4_addr), ntohl(ipv4_header->destination_ipv4_addr), buffer + sizeof(struct ipv4_header), len - sizeof(struct ipv4_header));
                 return;
             default:
                 printf("%d %s\n", ipv4_header->protocol, "Unknown IP protocol");
@@ -127,8 +127,8 @@ void ipv4_output(struct mbuf *payload, uint32_t source_addr, uint32_t dest_addr,
     ipv4_header->TTL = TTL_VALUE;
     ipv4_header->protocol = protocol_number;
     ipv4_header->header_checksum = 0;
-    ipv4_header->source_ipv4_addr = htons(source_addr);
-    ipv4_header->destination_ipv4_addr = htons(dest_addr);
+    ipv4_header->source_ipv4_addr = htonl(source_addr);
+    ipv4_header->destination_ipv4_addr = htonl(dest_addr);
     ipv4_header->header_checksum = calculate_checksum(ipv4_header, sizeof(struct ipv4_header));
 
     for(struct net_device *dev = dev_base; dev; dev = dev->next) {
@@ -137,8 +137,7 @@ void ipv4_output(struct mbuf *payload, uint32_t source_addr, uint32_t dest_addr,
         }
 
         // if same network
-        if((dev->ip_dev->ipv4_address & dev->ip_dev->subnet_mask) == (ipv4_header->source_ipv4_addr & dev->ip_dev->subnet_mask)) {
-            // find destination mac address using ARP
+        if((dev->ip_dev->ipv4_address & dev->ip_dev->subnet_mask) == (ntohl(ipv4_header->destination_ipv4_addr) & dev->ip_dev->subnet_mask)) {
             struct arp_entry *arp_entry;
             arp_entry = arp_cash_search(dest_addr);
             if(arp_entry == NULL) {
