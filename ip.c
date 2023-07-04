@@ -26,26 +26,6 @@ struct ipv4_header
     uint32_t destination_ipv4_addr;
 } __attribute__((__packed__));
 
-uint16_t ipv4_calculate_checksum(const void *data, size_t len) {
-    const uint16_t *buffer = (const uint16_t *)data;
-    uint32_t sum = 0;
-
-    while(len > 1) {
-        sum += *buffer++;
-        len -= 2;
-    }
-
-    if(len > 0) {
-        sum += *(const uint8_t *)buffer;
-    }
-
-    while(sum >> 16) {
-        sum = (sum & 0xffff) + (sum >> 16);
-    }
-
-    return (uint16_t)(~sum);
-}
-
 void ipv4_dump(unsigned char *buffer)
 {
     struct ipv4_header *ipv4_header;
@@ -149,7 +129,7 @@ void ipv4_output(struct mbuf *payload, uint32_t source_addr, uint32_t dest_addr,
     ipv4_header->header_checksum = 0;
     ipv4_header->source_ipv4_addr = htons(source_addr);
     ipv4_header->destination_ipv4_addr = htons(dest_addr);
-    ipv4_header->header_checksum = ipv4_calculate_checksum(ipv4_header, sizeof(struct ipv4_header));
+    ipv4_header->header_checksum = calculate_checksum(ipv4_header, sizeof(struct ipv4_header));
 
     for(struct net_device *dev = dev_base; dev; dev = dev->next) {
         if(dev->ip_dev == NULL || dev->ip_dev->ipv4_address == IPV4_ADDRESS(0,0,0,0)) {
