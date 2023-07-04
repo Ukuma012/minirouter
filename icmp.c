@@ -4,8 +4,10 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include "icmp.h"
 #include "mbuf.h"
+#include "utils.h"
+#include "icmp.h"
+#include "ip.h"
 
 struct icmp_header {
     uint8_t type;
@@ -16,7 +18,7 @@ struct icmp_header {
 struct icmp_echo_reply {
     uint16_t identity;
     uint16_t sequence;
-    uint8_t data[]
+    uint8_t data[];
 } __attribute__((packed));
 
 struct icmp_message {
@@ -59,10 +61,12 @@ void icmp_input(uint32_t soruce_ip_addr, uint32_t destination_ip_addr, unsigned 
             icmp_reply_message->reply.identity = icmp_message->reply.identity;
             icmp_reply_message->reply.sequence = icmp_message->reply.sequence;
             memcpy(&icmp_reply_message->reply.data, icmp_message->reply.data, len - sizeof(struct icmp_header) - sizeof(struct icmp_echo_reply));
+            icmp_reply_message->header.checksum = calculate_checksum(reply_mbuf->buffer, reply_mbuf->len);
 
-            //@todo checksum
-            
-            return;
+            ipv4_output(reply_mbuf, soruce_ip_addr, destination_ip_addr, ICMP_PROTOCOL_NUM);
+            break;
+        default:
+            break;
     }
     return;
 }
