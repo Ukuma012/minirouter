@@ -41,7 +41,6 @@ struct icmp_message {
 } __attribute__((packed));
 
 void icmp_dump(unsigned char *buffer) {
-    //@todo icmp_message cast
     struct icmp_message *icmp_message;
     icmp_message = (struct icmp_message *)buffer;
 
@@ -71,12 +70,6 @@ void icmp_input(uint32_t soruce_ip_addr, uint32_t destination_ip_addr, unsigned 
             struct mbuf *reply_mbuf = mbuf_create(len);
             struct icmp_message *icmp_reply_message;
             icmp_reply_message = (struct icmp_message *)reply_mbuf->buffer;
-
-            // debug
-            // printf("icmp checksum: %u\n", icmp_message->header.checksum);
-            // printf("icmp identity: %u\n", icmp_message->reply.identity);
-            // printf("icmp sequence: %u\n", icmp_message->reply.sequence);
-
             icmp_reply_message->header.type = ICMP_ECHO_REPLY;
             icmp_reply_message->header.code = icmp_message->header.code; 
             icmp_reply_message->header.checksum = 0;
@@ -85,14 +78,7 @@ void icmp_input(uint32_t soruce_ip_addr, uint32_t destination_ip_addr, unsigned 
             memcpy(&icmp_reply_message->reply.data, icmp_message->reply.data, len - sizeof(struct icmp_header) - sizeof(struct icmp_echo_reply));
             icmp_reply_message->header.checksum = calculate_checksum(reply_mbuf->buffer, reply_mbuf->len);
 
-            // debug
-            // printf("type: %d\n", icmp_reply_message->header.type);
-            // printf("code: %d\n", icmp_reply_message->header.code);
-            // printf("checksum: %u\n", icmp_reply_message->header.checksum);
-            // printf("identity: %u\n", icmp_reply_message->reply.identity);
-            // printf("sequence: %u\n", icmp_reply_message->reply.sequence);
-
-            ipv4_output(reply_mbuf, soruce_ip_addr, destination_ip_addr, ICMP_PROTOCOL_NUM);
+            ipv4_output(reply_mbuf, destination_ip_addr, soruce_ip_addr, ICMP_PROTOCOL_NUM);
             break;
         default:
             break;
