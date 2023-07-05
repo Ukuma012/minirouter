@@ -63,10 +63,6 @@ void ipv4_address_set(struct net_device *dev, uint32_t ipv4_address, uint32_t su
     dev->ip_dev->subnet_mask = subnet_mask;
     dev->ip_dev->broadcast_addr = (ipv4_address & subnet_mask) | (~subnet_mask);
 
-    //    ipv4_address_set_dot(ipv4_address);
-    //    ipv4_address_set_dot(subnet_mask);
-    //    ipv4_address_set_dot(dev->ip_dev->broadcast_addr);
-
     printf("%s ip address set\n", dev->name);
 
     return;
