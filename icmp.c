@@ -33,9 +33,8 @@ void icmp_input(uint32_t soruce_ip_addr, uint32_t destination_ip_addr, unsigned 
             return;
             
         case ICMP_ECHO_REQUEST:
-            icmp_dump(buffer);
             printf("%s\n", "ICMP ECHO REQUEST arrives"); 
-
+            icmp_dump(buffer);
             struct mbuf *reply_mbuf = mbuf_create(len);
             struct icmp_message *icmp_reply_message;
             icmp_reply_message = (struct icmp_message *)reply_mbuf->buffer;
