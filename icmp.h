@@ -1,8 +1,10 @@
-#ifndef IP_H
-#define IP_H
+#ifndef ICMP_H
+#define ICMP_H
 
 #define ICMP_ECHO_REPLY 0
+#define ICMP_DESTINATION_UNREACHABLE 3
 #define ICMP_ECHO_REQUEST 8
+#define ICMP_TIME_EXCEEEDED 11
 #define ICMP_PROTOCOL_NUM 1
 
 struct icmp_header {
@@ -38,5 +40,6 @@ struct icmp_message {
 
 void icmp_dump(unsigned char *);
 void icmp_input(uint32_t, uint32_t, unsigned char *, ssize_t);
+void icmp_time_exceeded(uint32_t, uint32_t, uint8_t, void *, size_t);
 
-#endif // IP_H
+#endif // ICMP_H

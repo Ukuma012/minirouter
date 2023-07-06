@@ -53,3 +53,23 @@ void icmp_input(uint32_t soruce_ip_addr, uint32_t destination_ip_addr, unsigned 
     }
     return;
 }
+
+void icmp_time_exceeded(uint32_t destination_ip_addr, uint32_t soruce_ip_addr, uint8_t code, void *error_ip_buffer, size_t len) {
+    if(len < sizeof(struct ipv4_header) + 8) {
+        return;
+    }
+
+    struct mbuf *time_exceeded_mbuf = mbuf_create(sizeof(struct ipv4_header) + sizeof(struct icmp_time_exceeded) + 8);
+    struct icmp_message *icmp_time_exceeded_msg;
+    icmp_time_exceeded_msg = (struct icmp_message *)time_exceeded_mbuf->buffer;
+
+    icmp_time_exceeded_msg->header.type = ICMP_TIME_EXCEEEDED;
+    icmp_time_exceeded_msg->header.code = code;
+    icmp_time_exceeded_msg->header.checksum = 0;
+    icmp_time_exceeded_msg->time_exceeded.unused = 0;
+    memcpy(icmp_time_exceeded_msg->time_exceeded.data, error_ip_buffer, sizeof(struct ipv4_header)+8);
+    icmp_time_exceeded_msg->header.checksum = calculate_checksum(time_exceeded_mbuf->buffer, time_exceeded_mbuf->len);
+
+    ipv4_output(time_exceeded_mbuf, destination_ip_addr, soruce_ip_addr, ICMP_PROTOCOL_NUM);
+    return;
+}
