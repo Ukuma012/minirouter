@@ -54,12 +54,12 @@ void icmp_input(uint32_t soruce_ip_addr, uint32_t destination_ip_addr, unsigned 
     return;
 }
 
-void icmp_time_exceeded(uint32_t destination_ip_addr, uint32_t soruce_ip_addr, uint8_t code, void *error_ip_buffer, size_t len) {
+void icmp_time_exceeded(uint32_t source_ip_addr, uint32_t destination_ip_addr, uint8_t code, void *error_ip_buffer, size_t len) {
     if(len < sizeof(struct ipv4_header) + 8) {
         return;
     }
 
-    struct mbuf *time_exceeded_mbuf = mbuf_create(sizeof(struct ipv4_header) + sizeof(struct icmp_time_exceeded) + 8);
+    struct mbuf *time_exceeded_mbuf = mbuf_create(sizeof(struct icmp_header) + sizeof(struct icmp_time_exceeded) + sizeof(struct ipv4_header) + 8);
     struct icmp_message *icmp_time_exceeded_msg;
     icmp_time_exceeded_msg = (struct icmp_message *)time_exceeded_mbuf->buffer;
 
@@ -70,6 +70,26 @@ void icmp_time_exceeded(uint32_t destination_ip_addr, uint32_t soruce_ip_addr, u
     memcpy(icmp_time_exceeded_msg->time_exceeded.data, error_ip_buffer, sizeof(struct ipv4_header)+8);
     icmp_time_exceeded_msg->header.checksum = calculate_checksum(time_exceeded_mbuf->buffer, time_exceeded_mbuf->len);
 
-    ipv4_output(time_exceeded_mbuf, destination_ip_addr, soruce_ip_addr, ICMP_PROTOCOL_NUM);
+    ipv4_output(time_exceeded_mbuf, destination_ip_addr, source_ip_addr, ICMP_PROTOCOL_NUM);
+    return;
+}
+
+void icmp_destination_unreachable(uint32_t source_ip_addr, uint32_t destination_ip_addr, uint8_t code, void *error_ip_buffer, size_t len) {
+    if(len < sizeof(struct ipv4_header) + 8) {
+        return;
+    }
+
+    struct mbuf *destination_unreachable_mbuf = mbuf_create(sizeof(struct icmp_header) + sizeof(struct icmp_destination_unreachable) + sizeof(struct ipv4_header) + 8);
+    struct icmp_message *icmp_dest_unreachable_msg;
+    icmp_dest_unreachable_msg = (struct icmp_message *)destination_unreachable_mbuf->buffer;
+
+    icmp_dest_unreachable_msg->header.type = ICMP_DESTINATION_UNREACHABLE;
+    icmp_dest_unreachable_msg->header.code = code;
+    icmp_dest_unreachable_msg->header.checksum = 0;
+    icmp_dest_unreachable_msg->dest_unreachable.unused = 0;
+    memcpy(icmp_dest_unreachable_msg->dest_unreachable.data, error_ip_buffer, sizeof(struct ipv4_header) + 8);
+    icmp_dest_unreachable_msg->header.checksum = calculate_checksum(destination_unreachable_mbuf->buffer, destination_unreachable_mbuf->len);
+
+    ipv4_output(destination_unreachable_mbuf, destination_ip_addr, source_ip_addr, ICMP_PROTOCOL_NUM);
     return;
 }

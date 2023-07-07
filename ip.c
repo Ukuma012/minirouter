@@ -70,6 +70,7 @@ void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len
                 return;
             case UDP_PROTOCOL:
                 printf("%s\n", "UDP");
+                icmp_destination_unreachable(ntohl(ipv4_header->source_ipv4_addr), input_dev->ip_dev->ipv4_address, PORT_UNREACHABLE, buffer, len);
                 return;
             case ICMP_PROTOCOL:
                 printf("%s\n", "ICMP");

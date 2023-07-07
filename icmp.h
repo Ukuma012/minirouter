@@ -7,6 +7,14 @@
 #define ICMP_TIME_EXCEEEDED 11
 #define ICMP_PROTOCOL_NUM 1
 
+#define NETWORK_UNREACHABLE 0
+#define HOST_UNREACHABLE 1
+#define PROTOCOL_UNREACHABLE 2
+#define PORT_UNREACHABLE 3
+#define FRAGMENTATION_NEEDED_AND_DF_SET 4
+#define SOURCE_ROUTE_FAILED 5
+#define DESTINATION_NETWORK_UNKNOEN 6
+
 struct icmp_header {
     uint8_t type;
     uint8_t code;
@@ -41,5 +49,6 @@ struct icmp_message {
 void icmp_dump(unsigned char *);
 void icmp_input(uint32_t, uint32_t, unsigned char *, ssize_t);
 void icmp_time_exceeded(uint32_t, uint32_t, uint8_t, void *, size_t);
+void icmp_destination_unreachable(uint32_t, uint32_t, uint8_t, void *, size_t);
 
 #endif // ICMP_H
