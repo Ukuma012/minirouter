@@ -59,8 +59,16 @@ void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len
     struct ipv4_header *ipv4_header;
     ipv4_header = (struct ipv4_header *)buffer;
 
+    uint32_t ipv4_network_addr = ipv4_get_network_addr(ntohl(ipv4_header->destination_ipv4_addr), IPV4_ADDRESS(255,255,255,0));
+
     for (struct net_device *dev = dev_base; dev; dev = dev->next)
     {
+        uint32_t dev_network_addr = ipv4_get_network_addr(dev->ip_dev->ipv4_address, dev->ip_dev->subnet_mask);
+        if(dev_network_addr == ipv4_network_addr) {
+            // routing table add?
+            printf("%s\n", "I know where you should go!");
+        }
+
         if (dev->ip_dev->ipv4_address == ntohl(ipv4_header->destination_ipv4_addr))
         {
             switch (ipv4_header->protocol)
