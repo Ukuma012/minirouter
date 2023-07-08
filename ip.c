@@ -132,3 +132,7 @@ void ipv4_output(struct mbuf *payload, uint32_t source_addr, uint32_t dest_addr,
         }
     }
 }
+
+uint32_t ipv4_get_network_addr(uint32_t ipv4_addr, uint32_t subnet_mask) {
+    return (ipv4_addr & subnet_mask);
+}

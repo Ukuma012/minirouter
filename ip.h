@@ -29,6 +29,13 @@ struct ipv4_header
     uint32_t destination_ipv4_addr;
 } __attribute__((__packed__));
 
+struct ipv4_trie {
+    int is_leaf;
+    struct ipv4_trie *zero_left;
+    struct ipv4_trie *one_right;
+    char *device_name;
+};
+
 struct net_device;
 struct mbuf;
 
@@ -36,5 +43,6 @@ void ipv4_dump(unsigned char *);
 void ipv4_address_set(struct net_device *, uint32_t, uint32_t);
 void ipv4_input(struct net_device *, unsigned char *, ssize_t);
 void ipv4_output(struct mbuf *, uint32_t, uint32_t, uint8_t);
+uint32_t ipv4_get_network_addr(uint32_t, uint32_t);
 
 #endif // IP_H
