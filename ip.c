@@ -61,6 +61,12 @@ void ipv4_address_set(struct net_device *dev, uint32_t ipv4_address, uint32_t su
     // data->dev = dev;
     // routing_binary_tree_add(root, (ipv4_address & subnet_mask), 24, data);
 
+    // struct routing_trie_node *result = malloc(sizeof(struct routing_trie_node));
+    // result = routing_binary_search(root, (ipv4_address & subnet_mask), 24);
+    // if(result != NULL) {
+    //     printf("%s\n", "test passed!");
+    // }
+
     return;
 }
 
