@@ -2,7 +2,8 @@
 #define ROUTING_H
 
 #include <stdint.h>
-#include "net.h"
+
+#define IPV4_LENGTH 32
 
 enum routing_type {
     directly_connected,
@@ -22,5 +23,7 @@ struct routing_trie_node {
     struct routing_trie_node *node_zero;
     struct routing_trie_node *node_one;
 };
+
+void routing_binary_tree_add(struct routing_trie_node *, uint32_t, uint32_t, struct routing_entry *);
 
 #endif // ROUTING_H
