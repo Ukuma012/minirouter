@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include "ip.h"
+#include "routing.h"
 #include "arp.h"
 #include "ethernet.h"
 #include "net.h"
@@ -50,6 +51,15 @@ void ipv4_address_set(struct net_device *dev, uint32_t ipv4_address, uint32_t su
     dev->ip_dev->broadcast_addr = (ipv4_address & subnet_mask) | (~subnet_mask);
 
     printf("%s ip address set\n", dev->name);
+
+    // debug
+    // struct routing_trie_node *root;
+    // root = malloc(sizeof(struct routing_trie_node));
+    // struct routing_entry *data;
+    // data = malloc(sizeof(struct routing_entry));
+    // data->type = directly_connected;
+    // data->dev = dev;
+    // routing_binary_tree_add(root, (ipv4_address & subnet_mask), 24, data);
 
     return;
 }
