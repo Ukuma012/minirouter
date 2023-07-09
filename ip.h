@@ -31,8 +31,8 @@ struct ipv4_header
 
 struct ipv4_trie {
     int is_leaf;
-    struct ipv4_trie *zero_left;
-    struct ipv4_trie *one_right;
+    struct ipv4_trie *node_zero;
+    struct ipv4_trie *node_one;
     char *device_name;
 };
 
