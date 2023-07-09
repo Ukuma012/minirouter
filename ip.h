@@ -29,13 +29,6 @@ struct ipv4_header
     uint32_t destination_ipv4_addr;
 } __attribute__((__packed__));
 
-struct ipv4_trie {
-    int is_leaf;
-    struct ipv4_trie *node_zero;
-    struct ipv4_trie *node_one;
-    char *device_name;
-};
-
 struct net_device;
 struct mbuf;
 
