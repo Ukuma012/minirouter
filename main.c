@@ -17,6 +17,7 @@
 #include "net.h"
 #include "ethernet.h"
 #include "ip.h"
+#include "routing.h"
 
 #define IGNORE_INTERFACES                    \
   {                                          \
@@ -50,6 +51,7 @@ struct net_device_data
   int fd;
 };
 
+
 int net_device_input(struct net_device *);
 int net_device_output(struct net_device *, uint8_t *, size_t);
 
@@ -59,6 +61,11 @@ int main(int argc, char *argv[])
   struct ifreq ifreq;
   struct ifaddrs *ifaddrs;
   getifaddrs(&ifaddrs);
+  struct routing_trie_node *root; 
+  if((root = malloc(sizeof(struct routing_trie_node))) < 0) {
+    fprintf(stderr, "mallof failed\n");
+    exit(1);
+  }
 
   for (struct ifaddrs *tmp = ifaddrs; tmp != NULL; tmp = tmp->ifa_next)
   {
@@ -132,8 +139,8 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  ipv4_address_set(net_get_device_name("router1-host1"), IPV4_ADDRESS(192,168,1,1), IPV4_ADDRESS(255,255,255,0));
-  ipv4_address_set(net_get_device_name("router1-router2"), IPV4_ADDRESS(192,168,0,1), IPV4_ADDRESS(255,255,255,0));
+  ipv4_address_set(root, net_get_device_name("router1-host1"), IPV4_ADDRESS(192,168,1,1), IPV4_ADDRESS(255,255,255,0));
+  ipv4_address_set(root, net_get_device_name("router1-router2"), IPV4_ADDRESS(192,168,0,1), IPV4_ADDRESS(255,255,255,0));
 
   while (true)
   {
