@@ -52,7 +52,7 @@ struct net_device_data
 };
 
 
-int net_device_input(struct net_device *);
+int net_device_input(struct routing_trie_node*, struct net_device *);
 int net_device_output(struct net_device *, uint8_t *, size_t);
 
 int main(int argc, char *argv[])
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
   {
     for (struct net_device *dev = dev_base; dev; dev = dev->next)
     {
-      dev->ops.poll(dev);
+      dev->ops.poll(root, dev);
     }
   }
 
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-int net_device_input(struct net_device *dev)
+int net_device_input(struct routing_trie_node *root, struct net_device *dev)
 {
   ssize_t n;
   unsigned char buffer[buffer_size];
@@ -177,8 +177,7 @@ int net_device_input(struct net_device *dev)
     printf("%02X", buffer[i]);
   }
   printf("\n");
-  ether_input(dev, buffer, n);
-  // ether_dump(buffer);
+  ether_input(root, dev, buffer, n);
   return 0;
 }
 

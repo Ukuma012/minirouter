@@ -8,6 +8,7 @@
 #include "arp.h"
 #include "net.h"
 #include "mbuf.h"
+#include "routing.h"
 
 struct ethernet_header
 {
@@ -45,7 +46,7 @@ void ether_dump(unsigned char *buffer)
     }
 }
 
-void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
+void ether_input(struct routing_trie_node *root, struct net_device *dev, unsigned char *buffer, ssize_t len) {
     struct ethernet_header *ether_header;
     ether_header = (struct ethernet_header *)buffer;
     uint16_t ether_type = ntohs(ether_header->ethertype);
@@ -57,7 +58,7 @@ void ether_input(struct net_device *dev, unsigned char *buffer, ssize_t len) {
         return;
     case ETHER_TYPE_IP:
         printf("%s\n", "IPV4");
-        ipv4_input(dev, buffer + sizeof(struct ethernet_header), len - sizeof(struct ethernet_header));
+        ipv4_input(root, dev, buffer + sizeof(struct ethernet_header), len - sizeof(struct ethernet_header));
         return;
     case ETHER_TYPE_IPV6:
         printf("%s\n", "IPV6");

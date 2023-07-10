@@ -65,7 +65,7 @@ void ipv4_address_routing_set(struct routing_trie_node *root, struct net_device 
     return;
 }
 
-void ipv4_input(struct net_device *input_dev, unsigned char *buffer, ssize_t len)
+void ipv4_input(struct routing_trie_node *root, struct net_device *input_dev, unsigned char *buffer, ssize_t len)
 {
     struct ipv4_header *ipv4_header;
     ipv4_header = (struct ipv4_header *)buffer;
