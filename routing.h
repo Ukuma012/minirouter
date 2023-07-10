@@ -25,6 +25,6 @@ struct routing_trie_node {
 };
 
 void routing_binary_tree_add(struct routing_trie_node *, uint32_t, uint32_t, struct routing_entry *);
-struct routing_entry * routing_binary_search(struct routing_trie_node *, uint32_t, uint32_t);
+struct routing_trie_node * routing_binary_search(struct routing_trie_node *, uint32_t, uint32_t);
 
 #endif // ROUTING_H

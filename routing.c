@@ -39,7 +39,7 @@ void routing_binary_tree_add(struct routing_trie_node *root, uint32_t ipv4_addr,
     return;
 }
 
-struct routing_entry * routing_binary_search(struct routing_trie_node *root, uint32_t target_ipv4_addr, uint32_t len) {
+struct routing_trie_node * routing_binary_search(struct routing_trie_node *root, uint32_t target_ipv4_addr, uint32_t len) {
     struct routing_trie_node *current = root;
 
     for(int i = 1; i <= len; ++i) {
