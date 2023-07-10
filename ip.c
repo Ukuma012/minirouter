@@ -59,7 +59,7 @@ void ipv4_address_routing_set(struct routing_trie_node *root, struct net_device 
     }
     data->type = directly_connected;
     data->dev = dev;
-    routing_binary_tree_add(root, (ipv4_address & subnet_mask), 24, data);
+    routing_binary_tree_add(root, (ipv4_address & subnet_mask), SUBNET_LENGTH, data);
 
     printf("%s routing table set\n", dev->name);
     return;
@@ -69,8 +69,6 @@ void ipv4_input(struct routing_trie_node *root, struct net_device *input_dev, un
 {
     struct ipv4_header *ipv4_header;
     ipv4_header = (struct ipv4_header *)buffer;
-
-    uint32_t ipv4_network_addr = ipv4_get_network_addr(ntohl(ipv4_header->destination_ipv4_addr), IPV4_ADDRESS(255,255,255,0));
 
     for (struct net_device *dev = dev_base; dev; dev = dev->next)
     {
@@ -95,6 +93,26 @@ void ipv4_input(struct routing_trie_node *root, struct net_device *input_dev, un
             }
         }
     }
+
+    uint32_t ipv4_network_addr = ipv4_get_network_addr(ntohl(ipv4_header->destination_ipv4_addr), IPV4_ADDRESS(255,255,255,0));
+
+    struct routing_trie_node *route;
+    if((route = malloc(sizeof(struct routing_trie_node))) < 0) {
+        fprintf(stderr, "malloc failed\n");
+        exit(1);
+    }
+    route = routing_binary_search(root, ipv4_header->destination_ipv4_addr, SUBNET_LENGTH);
+
+    if(route == NULL) {
+        printf("%s", "No route for :");
+        ipv4_ntoh_dot(ipv4_header->destination_ipv4_addr);
+        return;
+    }
+
+    if(route->data->type == directly_connected) {
+        printf("%s\n", "HI!");
+    }
+
     return;
 }
 

@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #define IPV4_LENGTH 32
+#define SUBNET_LENGTH 24
 
 enum routing_type {
     directly_connected,
