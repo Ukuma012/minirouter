@@ -34,7 +34,7 @@ struct mbuf;
 struct routing_trie_node;
 
 void ipv4_dump(unsigned char *);
-void ipv4_address_set(struct routing_trie_node *, struct net_device *, uint32_t, uint32_t);
+void ipv4_address_routing_set(struct routing_trie_node *, struct net_device *, uint32_t, uint32_t);
 void ipv4_input(struct net_device *, unsigned char *, ssize_t);
 void ipv4_output(struct mbuf *, uint32_t, uint32_t, uint8_t);
 uint32_t ipv4_get_network_addr(uint32_t, uint32_t);
