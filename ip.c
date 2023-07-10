@@ -37,7 +37,7 @@ void ipv4_dump(unsigned char *buffer)
     return;
 }
 
-void ipv4_address_set(struct net_device *dev, uint32_t ipv4_address, uint32_t subnet_mask)
+void ipv4_address_set(struct routing_trie_node *root, struct net_device *dev, uint32_t ipv4_address, uint32_t subnet_mask)
 {
     if (dev == NULL)
     {
@@ -53,8 +53,6 @@ void ipv4_address_set(struct net_device *dev, uint32_t ipv4_address, uint32_t su
     printf("%s ip address set\n", dev->name);
 
     // debug
-    // struct routing_trie_node *root;
-    // root = malloc(sizeof(struct routing_trie_node));
     // struct routing_entry *data;
     // data = malloc(sizeof(struct routing_entry));
     // data->type = directly_connected;
@@ -65,6 +63,7 @@ void ipv4_address_set(struct net_device *dev, uint32_t ipv4_address, uint32_t su
     // result = routing_binary_search(root, (ipv4_address & subnet_mask), 24);
     // if(result != NULL) {
     //     printf("%s\n", "test passed!");
+    //     printf("%s\n", result->data->dev->name);
     // }
 
     return;
