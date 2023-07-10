@@ -139,8 +139,8 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  ipv4_address_set(root, net_get_device_name("router1-host1"), IPV4_ADDRESS(192,168,1,1), IPV4_ADDRESS(255,255,255,0));
-  ipv4_address_set(root, net_get_device_name("router1-router2"), IPV4_ADDRESS(192,168,0,1), IPV4_ADDRESS(255,255,255,0));
+  ipv4_address_routing_set(root, net_get_device_name("router1-host1"), IPV4_ADDRESS(192,168,1,1), IPV4_ADDRESS(255,255,255,0));
+  ipv4_address_routing_set(root, net_get_device_name("router1-router2"), IPV4_ADDRESS(192,168,0,1), IPV4_ADDRESS(255,255,255,0));
 
   while (true)
   {
