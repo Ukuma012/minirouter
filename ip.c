@@ -110,7 +110,13 @@ void ipv4_input(struct routing_trie_node *root, struct net_device *input_dev, un
     }
 
     if(route->data->type == directly_connected) {
-        printf("%s\n", "HI!");
+        printf("%s\n", route->data->dev->name);
+        ipv4_ntoh_dot(ipv4_header->destination_ipv4_addr);
+    }
+
+    if(route->data->type == network) {
+        printf("%s\n", "network");
+        ipv4_ntoh_dot(route->data->next_hop);
     }
 
     return;
